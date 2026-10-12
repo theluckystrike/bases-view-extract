@@ -1,0 +1,66 @@
+[
+  {
+    "feature": "choose-view",
+    "caption": "Choose one named view from a Base.",
+    "zoom": 0.85,
+    "eval": "(async()=>{await app.workspace.openLinkText('Bases View Extract/Weekly review.md','',false); const p=app.plugins.plugins['bases-view-extract']; for(const m of p.modals)m.close(); p.pro.signOut(); const v=app.workspace.getMostRecentLeaf().view; v.editor.setValue(\"# Weekly review\\n\\n## Active projects\\n\\nSelect this line to insert the saved view.\\n\\n## Review notes\\n\\nAtlas needs a design check. Beacon is ready for research.\\n\"); v.editor.setSelection({line:4,ch:0},{line:4,ch:v.editor.getLine(4).length}); const m=p.openExtract(); m.contentEl.querySelector('[data-bve=\"file\"]').value='Bases View Extract/Projects.base'; await m.loadFile('Bases View Extract/Projects.base'); const s=m.contentEl.querySelector('[data-bve=\"view\"]'); s.value='Active projects'; s.dispatchEvent(new Event('change')); return 'ok';})()",
+    "after": "for(const m of app.plugins.plugins['bases-view-extract'].modals)m.close(); app.plugins.plugins['bases-view-extract'].pro.signOut(); 'ok'"
+  },
+  {
+    "feature": "shared-fields",
+    "caption": "The preview keeps shared filters, formulas, properties and summaries.",
+    "zoom": 0.85,
+    "eval": "(async()=>{await app.workspace.openLinkText('Bases View Extract/Weekly review.md','',false); const p=app.plugins.plugins['bases-view-extract']; for(const m of p.modals)m.close(); p.pro.signOut(); const v=app.workspace.getMostRecentLeaf().view; v.editor.setValue(\"# Weekly review\\n\\n## Active projects\\n\\nSelect this line to insert the saved view.\\n\\n## Review notes\\n\\nAtlas needs a design check. Beacon is ready for research.\\n\"); v.editor.setSelection({line:4,ch:0},{line:4,ch:v.editor.getLine(4).length}); const m=p.openExtract(); m.contentEl.querySelector('[data-bve=\"file\"]').value='Bases View Extract/Projects.base'; await m.loadFile('Bases View Extract/Projects.base'); const s=m.contentEl.querySelector('[data-bve=\"view\"]'); s.value='Active projects'; s.dispatchEvent(new Event('change')); return 'ok';})()",
+    "after": "for(const m of app.plugins.plugins['bases-view-extract'].modals)m.close(); app.plugins.plugins['bases-view-extract'].pro.signOut(); 'ok'"
+  },
+  {
+    "feature": "group-order",
+    "caption": "The view keeps its group setup and null group key.",
+    "zoom": 0.85,
+    "eval": "(async()=>{await app.workspace.openLinkText('Bases View Extract/Weekly review.md','',false); const p=app.plugins.plugins['bases-view-extract']; for(const m of p.modals)m.close(); p.pro.signOut(); const v=app.workspace.getMostRecentLeaf().view; v.editor.setValue(\"# Weekly review\\n\\n## Active projects\\n\\nSelect this line to insert the saved view.\\n\\n## Review notes\\n\\nAtlas needs a design check. Beacon is ready for research.\\n\"); v.editor.setSelection({line:4,ch:0},{line:4,ch:v.editor.getLine(4).length}); const m=p.openExtract(); m.contentEl.querySelector('[data-bve=\"file\"]').value='Bases View Extract/Projects.base'; await m.loadFile('Bases View Extract/Projects.base'); const s=m.contentEl.querySelector('[data-bve=\"view\"]'); s.value='Active projects'; s.dispatchEvent(new Event('change')); m.contentEl.querySelector('[data-bve=\"preview\"]').scrollTop=10000; return 'ok';})()",
+    "after": "for(const m of app.plugins.plugins['bases-view-extract'].modals)m.close(); app.plugins.plugins['bases-view-extract'].pro.signOut(); 'ok'"
+  },
+  {
+    "feature": "context-warning",
+    "caption": "A query with this and a relative link shows a context warning.",
+    "zoom": 0.85,
+    "eval": "(async()=>{await app.workspace.openLinkText('Bases View Extract/Weekly review.md','',false); const p=app.plugins.plugins['bases-view-extract']; for(const m of p.modals)m.close(); p.pro.signOut(); const v=app.workspace.getMostRecentLeaf().view; v.editor.setValue(\"# Weekly review\\n\\n## Active projects\\n\\nSelect this line to insert the saved view.\\n\\n## Review notes\\n\\nAtlas needs a design check. Beacon is ready for research.\\n\"); v.editor.setSelection({line:4,ch:0},{line:4,ch:v.editor.getLine(4).length}); const m=p.openExtract(); m.contentEl.querySelector('[data-bve=\"file\"]').value='Bases View Extract/Context.base'; await m.loadFile('Bases View Extract/Context.base'); return 'ok';})()",
+    "after": "for(const m of app.plugins.plugins['bases-view-extract'].modals)m.close(); app.plugins.plugins['bases-view-extract'].pro.signOut(); 'ok'"
+  },
+  {
+    "feature": "batch-sections",
+    "caption": "Pro previews two complete queries as separate sections.",
+    "zoom": 0.85,
+    "eval": "(async()=>{await app.workspace.openLinkText('Bases View Extract/Weekly review.md','',false); const p=app.plugins.plugins['bases-view-extract']; for(const m of p.modals)m.close(); p.pro.signOut(); const v=app.workspace.getMostRecentLeaf().view; v.editor.setValue(\"# Weekly review\\n\\n## Active projects\\n\\nSelect this line to insert the saved view.\\n\\n## Review notes\\n\\nAtlas needs a design check. Beacon is ready for research.\\n\"); v.editor.setSelection({line:4,ch:0},{line:4,ch:v.editor.getLine(4).length}); const m=p.openExtract(); m.contentEl.querySelector('[data-bve=\"file\"]').value='Bases View Extract/Projects.base'; await m.loadFile('Bases View Extract/Projects.base'); p.pro.opts.http=async()=>({status:200,json:{data:{viewer:{login:'demo-reader'},user:{sponsorshipForViewerAsSponsor:{isActive:true,isOneTimePayment:false,tier:{name:'$5 a month',monthlyPriceInCents:500}}}}}}); app.secretStorage.setSecret('bases-view-extract-github-token','gho_'+'0'.repeat(36)); await p.pro.refreshNow(); const t=m.contentEl.querySelector('[data-bve=\"batch\"]'); t.checked=true; t.dispatchEvent(new Event('change')); const b=m.contentEl.querySelector('[data-bve-view=\"Active projects\"]'); b.checked=true;b.dispatchEvent(new Event('change')); return 'ok';})()",
+    "after": "for(const m of app.plugins.plugins['bases-view-extract'].modals)m.close(); app.plugins.plugins['bases-view-extract'].pro.signOut(); 'ok'"
+  },
+  {
+    "feature": "presets",
+    "caption": "Pro saves a named snapshot in the local preset library.",
+    "zoom": 0.85,
+    "eval": "(async()=>{await app.workspace.openLinkText('Bases View Extract/Weekly review.md','',false); const p=app.plugins.plugins['bases-view-extract']; for(const m of p.modals)m.close(); p.pro.signOut(); await p.deletePreset('Weekly review'); const v=app.workspace.getMostRecentLeaf().view; v.editor.setValue(\"# Weekly review\\n\\n## Active projects\\n\\nSelect this line to insert the saved view.\\n\\n## Review notes\\n\\nAtlas needs a design check. Beacon is ready for research.\\n\"); v.editor.setSelection({line:4,ch:0},{line:4,ch:v.editor.getLine(4).length}); const m=p.openExtract(); m.contentEl.querySelector('[data-bve=\"file\"]').value='Bases View Extract/Projects.base'; await m.loadFile('Bases View Extract/Projects.base'); const s=m.contentEl.querySelector('[data-bve=\"view\"]'); s.value='Active projects'; s.dispatchEvent(new Event('change')); p.pro.opts.http=async()=>({status:200,json:{data:{viewer:{login:'demo-reader'},user:{sponsorshipForViewerAsSponsor:{isActive:true,isOneTimePayment:false,tier:{name:'$5 a month',monthlyPriceInCents:500}}}}}}); app.secretStorage.setSecret('bases-view-extract-github-token','gho_'+'0'.repeat(36)); await p.pro.refreshNow(); m.contentEl.querySelector('[data-bve=\"preset-name\"]').value='Weekly review'; m.contentEl.querySelector('[data-bve=\"save\"]').click(); await new Promise((r)=>setTimeout(r,300)); return 'ok';})()",
+    "after": "for(const m of app.plugins.plugins['bases-view-extract'].modals)m.close(); app.plugins.plugins['bases-view-extract'].pro.signOut(); 'ok'"
+  },
+  {
+    "feature": "extract-workflow",
+    "caption": "Choose a view, check the complete query, then insert it in the weekly review.",
+    "frames": [
+      {
+        "zoom": 0.85,
+        "eval": "(async()=>{await app.workspace.openLinkText('Bases View Extract/Extract demo.md','',false); const p=app.plugins.plugins['bases-view-extract']; for(const m of p.modals)m.close(); p.pro.signOut(); const v=app.workspace.getMostRecentLeaf().view; const state=v.leaf.getViewState(); await v.leaf.setViewState({...state,state:{...state.state,mode:'source'}}); v.editor.setValue(\"# Weekly review\\n\\n## Active projects\\n\\nSelect this line to insert the saved view.\\n\\n## Review notes\\n\\nAtlas needs a design check. Beacon is ready for research.\\n\"); v.editor.setSelection({line:4,ch:0},{line:4,ch:v.editor.getLine(4).length}); const m=p.openExtract(); m.contentEl.querySelector('[data-bve=\"file\"]').value='Bases View Extract/Projects.base'; await m.loadFile('Bases View Extract/Projects.base'); return 'ok';})()",
+        "hold": 1400
+      },
+      {
+        "zoom": 0.85,
+        "eval": "(async()=>{const p=app.plugins.plugins['bases-view-extract']; const m=[...p.modals][0]; const s=m.contentEl.querySelector('[data-bve=\"view\"]'); s.value='Active projects'; s.dispatchEvent(new Event('change')); return 'ok';})()",
+        "hold": 1800
+      },
+      {
+        "zoom": 0.85,
+        "eval": "(async()=>{const p=app.plugins.plugins['bases-view-extract']; const m=[...p.modals][0]; m.insert(); if(p.modals.has(m))throw new Error(m.contentEl.querySelector('[data-bve=\"status\"]').textContent); const v=app.workspace.getMostRecentLeaf().view; if(!v.editor.getValue().includes('```base'))throw new Error('The demo query was not inserted.'); await v.leaf.setViewState({...v.leaf.getViewState(),state:{...v.leaf.getViewState().state,mode:'preview'}}); return 'ok';})()",
+        "hold": 2200
+      }
+    ],
+    "after": "for(const m of app.plugins.plugins['bases-view-extract'].modals)m.close(); app.plugins.plugins['bases-view-extract'].pro.signOut(); 'ok'"
+  }
+]

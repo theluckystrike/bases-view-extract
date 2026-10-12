@@ -1,0 +1,26 @@
+filters:
+  and:
+    - file.inFolder("Bases View Extract/Projects")
+formulas:
+  cost: hours * rate
+properties:
+  formula.cost:
+    displayName: Cost
+summaries:
+  costTotal: values.reduce(acc + value, 0)
+views:
+  - type: table
+    name: All projects
+    order: [file.name, status, formula.cost]
+  - type: table
+    name: Active projects
+    filters:
+      and:
+        - status == "open"
+    order: [file.name, status, hours, formula.cost]
+    summaries:
+      formula.cost: costTotal
+    groupBy:
+      property: status
+      direction: ASC
+    groupOrder: [open, null, hold]

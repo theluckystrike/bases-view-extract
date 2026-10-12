@@ -1,0 +1,62 @@
+.bve-modal {
+	width: min(780px, 95vw);
+}
+
+.bve-field {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-3);
+	margin-block: var(--size-4-3);
+}
+
+.bve-field select {
+	flex: 1;
+	min-width: 0;
+}
+
+.bve-field input {
+	flex: 1;
+	min-width: 0;
+}
+
+.bve-preview {
+	width: 100%;
+	min-height: 240px;
+	resize: vertical;
+	font-family: var(--font-monospace);
+	font-size: var(--font-smaller);
+}
+
+.bve-hint {
+	color: var(--text-muted);
+	font-size: var(--font-smaller);
+}
+
+.bve-status {
+	padding-block: var(--size-4-2);
+}
+
+.bve-error {
+	color: var(--text-error);
+}
+
+.bve-actions {
+	display: flex;
+	gap: var(--size-4-2);
+	margin-block: var(--size-4-3);
+}
+
+.bve-presets {
+	border-top: 1px solid var(--background-modifier-border);
+	padding-top: var(--size-4-2);
+}
+
+.bve-presets button {
+	margin-inline-end: var(--size-4-2);
+}
+
+.bve-view-choice {
+	display: inline-flex;
+	align-items: center;
+	margin-inline-end: var(--size-4-4);
+}

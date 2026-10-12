@@ -1,0 +1,762 @@
+{
+ "slug": "bases-view-extract",
+ "module": "bases-view-extract/src/extract",
+ "function": "extractConfig",
+ "cases": [
+  {
+   "name": "AC1 select B and keep A out",
+   "args": [
+    {
+     "views": [
+      {
+       "name": "A",
+       "type": "table"
+      },
+      {
+       "name": "B",
+       "type": "table"
+      }
+     ]
+    },
+    "B"
+   ],
+   "expected": {
+    "views": [
+     {
+      "name": "B",
+      "type": "table"
+     }
+    ]
+   }
+  },
+  {
+   "name": "AC1 select A",
+   "args": [
+    {
+     "views": [
+      {
+       "name": "A",
+       "type": "table"
+      },
+      {
+       "name": "B",
+       "type": "table"
+      }
+     ]
+    },
+    "A"
+   ],
+   "expected": {
+    "views": [
+     {
+      "name": "A",
+      "type": "table"
+     }
+    ]
+   }
+  },
+  {
+   "name": "AC2 shared and view filters keep their scope",
+   "args": [
+    {
+     "filters": {
+      "and": [
+       "file.ext == \"md\""
+      ]
+     },
+     "views": [
+      {
+       "name": "B",
+       "type": "table",
+       "filters": {
+        "or": [
+         "status == \"open\""
+        ]
+       }
+      }
+     ]
+    },
+    "B"
+   ],
+   "expected": {
+    "filters": {
+     "and": [
+      "file.ext == \"md\""
+     ]
+    },
+    "views": [
+     {
+      "name": "B",
+      "type": "table",
+      "filters": {
+       "or": [
+        "status == \"open\""
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": "AC2 nested filter objects",
+   "args": [
+    {
+     "filters": {
+      "and": [
+       {
+        "or": [
+         "x",
+         "y"
+        ]
+       },
+       {
+        "not": [
+         "z"
+        ]
+       }
+      ]
+     },
+     "views": [
+      {
+       "name": "B",
+       "filters": {
+        "and": [
+         "q"
+        ]
+       }
+      }
+     ]
+    },
+    "B"
+   ],
+   "expected": {
+    "filters": {
+     "and": [
+      {
+       "or": [
+        "x",
+        "y"
+       ]
+      },
+      {
+       "not": [
+        "z"
+       ]
+      }
+     ]
+    },
+    "views": [
+     {
+      "name": "B",
+      "filters": {
+       "and": [
+        "q"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": "AC3 formula cost and custom summary",
+   "args": [
+    {
+     "formulas": {
+      "cost": "hours * rate",
+      "unused": "1"
+     },
+     "summaries": {
+      "budget": "values.reduce(sum)"
+     },
+     "views": [
+      {
+       "name": "B",
+       "order": [
+        "formula.cost"
+       ],
+       "summaries": {
+        "formula.cost": "budget"
+       }
+      }
+     ]
+    },
+    "B"
+   ],
+   "expected": {
+    "formulas": {
+     "cost": "hours * rate",
+     "unused": "1"
+    },
+    "summaries": {
+     "budget": "values.reduce(sum)"
+    },
+    "views": [
+     {
+      "name": "B",
+      "order": [
+       "formula.cost"
+      ],
+      "summaries": {
+       "formula.cost": "budget"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": "AC3 shared property labels",
+   "args": [
+    {
+     "properties": {
+      "formula.cost": {
+       "displayName": "Cost"
+      },
+      "note.status": {
+       "displayName": "State"
+      }
+     },
+     "views": [
+      {
+       "name": "B"
+      }
+     ]
+    },
+    "B"
+   ],
+   "expected": {
+    "properties": {
+     "formula.cost": {
+      "displayName": "Cost"
+     },
+     "note.status": {
+      "displayName": "State"
+     }
+    },
+    "views": [
+     {
+      "name": "B"
+     }
+    ]
+   }
+  },
+  {
+   "name": "AC4 unknown top and view fields",
+   "args": [
+    {
+     "future": {
+      "enabled": false,
+      "items": [
+       0,
+       null,
+       {
+        "x": "yes"
+       }
+      ]
+     },
+     "views": [
+      {
+       "name": "B",
+       "providerOptions": {
+        "mode": "x",
+        "limit": 0
+       }
+      }
+     ]
+    },
+    "B"
+   ],
+   "expected": {
+    "future": {
+     "enabled": false,
+     "items": [
+      0,
+      null,
+      {
+       "x": "yes"
+      }
+     ]
+    },
+    "views": [
+     {
+      "name": "B",
+      "providerOptions": {
+       "mode": "x",
+       "limit": 0
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": "AC4 preserve empty collections",
+   "args": [
+    {
+     "future": [],
+     "properties": {},
+     "views": [
+      {
+       "name": "B",
+       "future": {}
+      }
+     ]
+    },
+    "B"
+   ],
+   "expected": {
+    "future": [],
+    "properties": {},
+    "views": [
+     {
+      "name": "B",
+      "future": {}
+     }
+    ]
+   }
+  },
+  {
+   "name": "AC5 group order keeps null and order",
+   "args": [
+    {
+     "views": [
+      {
+       "name": "B",
+       "groupOrder": [
+        "B",
+        null,
+        "A"
+       ],
+       "groupBy": {
+        "property": "status",
+        "direction": "ASC"
+       }
+      }
+     ]
+    },
+    "B"
+   ],
+   "expected": {
+    "views": [
+     {
+      "name": "B",
+      "groupOrder": [
+       "B",
+       null,
+       "A"
+      ],
+      "groupBy": {
+       "property": "status",
+       "direction": "ASC"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": "AC5 null fields keep values",
+   "args": [
+    {
+     "future": null,
+     "views": [
+      {
+       "name": "B",
+       "limit": null
+      }
+     ]
+    },
+    "B"
+   ],
+   "expected": {
+    "future": null,
+    "views": [
+     {
+      "name": "B",
+      "limit": null
+     }
+    ]
+   }
+  },
+  {
+   "name": "AC6 duplicate selected name stops",
+   "args": [
+    {
+     "views": [
+      {
+       "name": "B"
+      },
+      {
+       "name": "B"
+      }
+     ]
+    },
+    "B"
+   ],
+   "expected": {
+    "error": "The view name is ambiguous: B"
+   }
+  },
+  {
+   "name": "AC6 other duplicate does not make B ambiguous",
+   "args": [
+    {
+     "views": [
+      {
+       "name": "A"
+      },
+      {
+       "name": "A"
+      },
+      {
+       "name": "B"
+      }
+     ]
+    },
+    "B"
+   ],
+   "expected": {
+    "views": [
+     {
+      "name": "B"
+     }
+    ]
+   }
+  },
+  {
+   "name": "missing view stops",
+   "args": [
+    {
+     "views": [
+      {
+       "name": "A",
+       "type": "table"
+      },
+      {
+       "name": "B",
+       "type": "table"
+      }
+     ]
+    },
+    "C"
+   ],
+   "expected": {
+    "error": "The view was not found: C"
+   }
+  },
+  {
+   "name": "empty views stops",
+   "args": [
+    {
+     "views": []
+    },
+    "B"
+   ],
+   "expected": {
+    "error": "The view was not found: B"
+   }
+  },
+  {
+   "name": "missing views array stops",
+   "args": [
+    {
+     "filters": []
+    },
+    "B"
+   ],
+   "expected": {
+    "error": "The Base must have a views array."
+   }
+  },
+  {
+   "name": "root sequence stops",
+   "args": [
+    [],
+    "B"
+   ],
+   "expected": {
+    "error": "The Base must have a views array."
+   }
+  },
+  {
+   "name": "null root stops",
+   "args": [
+    null,
+    "B"
+   ],
+   "expected": {
+    "error": "The Base must have a views array."
+   }
+  },
+  {
+   "name": "unnamed view stops",
+   "args": [
+    {
+     "views": [
+      {
+       "type": "table"
+      }
+     ]
+    },
+    "B"
+   ],
+   "expected": {
+    "error": "Each view must have a non-empty name."
+   }
+  },
+  {
+   "name": "blank view name stops",
+   "args": [
+    {
+     "views": [
+      {
+       "name": "  "
+      }
+     ]
+    },
+    "B"
+   ],
+   "expected": {
+    "error": "Each view must have a non-empty name."
+   }
+  },
+  {
+   "name": "view name is case sensitive",
+   "args": [
+    {
+     "views": [
+      {
+       "name": "b"
+      },
+      {
+       "name": "B"
+      }
+     ]
+    },
+    "B"
+   ],
+   "expected": {
+    "views": [
+     {
+      "name": "B"
+     }
+    ]
+   }
+  },
+  {
+   "name": "Unicode view and unknown strings",
+   "args": [
+    {
+     "views": [
+      {
+       "name": "計画",
+       "title": "Café"
+      }
+     ]
+    },
+    "計画"
+   ],
+   "expected": {
+    "views": [
+     {
+      "name": "計画",
+      "title": "Café"
+     }
+    ]
+   }
+  },
+  {
+   "name": "community type remains in output",
+   "args": [
+    {
+     "views": [
+      {
+       "name": "B",
+       "type": "community-cards",
+       "columns": 4
+      }
+     ]
+    },
+    "B"
+   ],
+   "expected": {
+    "views": [
+     {
+      "name": "B",
+      "type": "community-cards",
+      "columns": 4
+     }
+    ]
+   }
+  },
+  {
+   "name": "view sort and limit remain",
+   "args": [
+    {
+     "views": [
+      {
+       "name": "B",
+       "sort": [
+        {
+         "property": "file.name",
+         "direction": "DESC"
+        }
+       ],
+       "limit": 12
+      }
+     ]
+    },
+    "B"
+   ],
+   "expected": {
+    "views": [
+     {
+      "name": "B",
+      "sort": [
+       {
+        "property": "file.name",
+        "direction": "DESC"
+       }
+      ],
+      "limit": 12
+     }
+    ]
+   }
+  },
+  {
+   "name": "AC7 invalid YAML reports parse error",
+   "function": "extractYaml",
+   "args": [
+    "views: [",
+    "B"
+   ],
+   "expected": {
+    "error": "Flow sequence in block collection must be sufficiently indented and end with a ] at line 1, column 9:\n\nviews: [\n        ^\n"
+   }
+  },
+  {
+   "name": "AC9 this file warns",
+   "function": "extractYaml",
+   "args": [
+    "{\"formulas\": {\"context\": \"this.file.name\"}, \"views\": [{\"name\": \"B\"}]}",
+    "B"
+   ],
+   "expected": {
+    "config": {
+     "formulas": {
+      "context": "this.file.name"
+     },
+     "views": [
+      {
+       "name": "B"
+      }
+     ]
+    },
+    "contextWarning": true
+   }
+  },
+  {
+   "name": "AC9 parent relative link warns",
+   "function": "extractYaml",
+   "args": [
+    "{\"formulas\": {\"context\": \"[[../Roadmap]]\"}, \"views\": [{\"name\": \"B\"}]}",
+    "B"
+   ],
+   "expected": {
+    "config": {
+     "formulas": {
+      "context": "[[../Roadmap]]"
+     },
+     "views": [
+      {
+       "name": "B"
+      }
+     ]
+    },
+    "contextWarning": true
+   }
+  },
+  {
+   "name": "AC9 bare link warns",
+   "function": "extractYaml",
+   "args": [
+    "{\"formulas\": {\"context\": \"[[Roadmap]]\"}, \"views\": [{\"name\": \"B\"}]}",
+    "B"
+   ],
+   "expected": {
+    "config": {
+     "formulas": {
+      "context": "[[Roadmap]]"
+     },
+     "views": [
+      {
+       "name": "B"
+      }
+     ]
+    },
+    "contextWarning": true
+   }
+  },
+  {
+   "name": "AC9 link formula warns",
+   "function": "extractYaml",
+   "args": [
+    "{\"formulas\": {\"context\": \"link(\\\"./Roadmap\\\")\"}, \"views\": [{\"name\": \"B\"}]}",
+    "B"
+   ],
+   "expected": {
+    "config": {
+     "formulas": {
+      "context": "link(\"./Roadmap\")"
+     },
+     "views": [
+      {
+       "name": "B"
+      }
+     ]
+    },
+    "contextWarning": true
+   }
+  },
+  {
+   "name": "plain query has no context warning",
+   "function": "extractYaml",
+   "args": [
+    "{\"views\": [{\"name\": \"B\", \"type\": \"table\"}]}",
+    "B"
+   ],
+   "expected": {
+    "config": {
+     "views": [
+      {
+       "name": "B",
+       "type": "table"
+      }
+     ]
+    },
+    "contextWarning": false
+   }
+  },
+  {
+   "name": "AC8 one complete block replaces selected text",
+   "function": "fenceYaml",
+   "args": [
+    "views:\n  - name: B\n"
+   ],
+   "expected": "```base\nviews:\n  - name: B\n```\n"
+  },
+  {
+   "name": "backticks in unknown strings do not end the block",
+   "function": "fenceYaml",
+   "args": [
+    "future: \"```\"\n"
+   ],
+   "expected": "````base\nfuture: \"```\"\n````\n"
+  },
+  {
+   "name": "batch heading cannot inject another section",
+   "function": "sectionTitle",
+   "args": [
+    "B\n## hidden"
+   ],
+   "expected": "B \\#\\# hidden"
+  }
+ ]
+}

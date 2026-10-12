@@ -1,0 +1,9 @@
+filters:
+  and:
+    - file.inFolder(this.file.folder)
+formulas:
+  plan: 'link("../Plan")'
+views:
+  - type: table
+    name: In this folder
+    order: [file.name]
