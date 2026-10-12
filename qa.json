@@ -21,6 +21,13 @@
     "after": "for(const m of app.plugins.plugins['bases-view-extract'].modals)m.close(); app.plugins.plugins['bases-view-extract'].pro.signOut(); 'ok'"
   },
   {
+    "feature": "copy-query",
+    "caption": "Copy one complete view query and keep the preview open.",
+    "zoom": 0.85,
+    "eval": "(async()=>{await app.workspace.openLinkText('Bases View Extract/Weekly review.md','',false); const p=app.plugins.plugins['bases-view-extract']; for(const m of p.modals)m.close(); p.pro.signOut(); const v=app.workspace.getMostRecentLeaf().view; v.editor.setValue(\"# Weekly review\\n\\n## Active projects\\n\\nSelect this line to insert the saved view.\\n\\n## Review notes\\n\\nAtlas needs a design check. Beacon is ready for research.\\n\"); v.editor.setSelection({line:4,ch:0},{line:4,ch:v.editor.getLine(4).length}); const m=p.openExtract(); m.contentEl.querySelector('[data-bve=\"file\"]').value='Bases View Extract/Projects.base'; await m.loadFile('Bases View Extract/Projects.base'); const s=m.contentEl.querySelector('[data-bve=\"view\"]'); s.value='Active projects'; s.dispatchEvent(new Event('change')); const before=v.editor.getValue(); await m.copy(); if(!m.contentEl.querySelector('[data-bve=\"status\"]').textContent.includes('Copied to clipboard'))throw new Error('Copy failed.'); if(v.editor.getValue()!==before)throw new Error('Copy changed the editor.'); return 'ok';})()",
+    "after": "for(const m of app.plugins.plugins['bases-view-extract'].modals)m.close(); app.plugins.plugins['bases-view-extract'].pro.signOut(); 'ok'"
+  },
+  {
     "feature": "context-warning",
     "caption": "A query with this and a relative link shows a context warning.",
     "zoom": 0.85,

@@ -42,6 +42,7 @@
 
 .bve-actions {
 	display: flex;
+	flex-wrap: wrap;
 	gap: var(--size-4-2);
 	margin-block: var(--size-4-3);
 }

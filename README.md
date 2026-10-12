@@ -26,6 +26,14 @@ The read only preview shows the fenced block before insertion. Scroll it to chec
 
 <img src="https://raw.githubusercontent.com/theluckystrike/bases-view-extract/HEAD/docs/group-order.png" alt="The selected view retains group order with a null entry" width="720">
 
+### Copy to clipboard
+
+Select “Copy to clipboard” to copy the complete query block, including its base fence and shared definitions. The copy omits the extra first newline that the preview adds when the cursor is in the middle of a line. Paste it into another note or a template. Copy of one saved view is free. The window stays open, and the action leaves the editor and source unchanged. It copies query source, not result rows. Several view sections and loaded presets keep their Pro requirement.
+
+Copy is disabled until the preview is valid. If clipboard access fails, the preview stays available. Select its text and copy it manually, or try the button again. A context warning stays visible after copy. Check the query in the note where you paste it; that note supplies the context. The plugin writes to the clipboard only when you select this action. It never reads the clipboard.
+
+<img src="https://raw.githubusercontent.com/theluckystrike/bases-view-extract/HEAD/docs/copy-query.png" alt="A saved view query is copied to the clipboard while the preview stays open" width="720">
+
 ### Check note context
 
 The preview explains that an embedded query uses the target note as its context. Expressions with `this`, wikilinks, link or file calls, or parent paths show a stronger warning. This check is conservative. Read the expressions before insertion; a copied query can select different notes when its context changes.
@@ -54,6 +62,8 @@ This source tree is prepared for release. To install a built copy by hand, put `
 2. Run “Bases View Extract: Extract a saved view” from the command palette.
 3. Select a Base file and its named view. Read the complete preview and its context notice.
 4. Select “Insert at selection”. The editor replaces the selection, or inserts at the cursor. The inserted text ends with a newline. In the middle of a line, it also starts with a newline so the fence is on its own line.
+
+To paste the query elsewhere, select “Copy to clipboard” at step 4. Paste the copied block at the required position in another note or template. Copy keeps the current note and selection unchanged.
 
 Cancel closes the window without insertion. A parse error clears the preview and disables the insert button. If the target note, its text or its selection changes while the window is open, insertion stops. Close the window and run the command again. Multiple editor selections are not supported.
 

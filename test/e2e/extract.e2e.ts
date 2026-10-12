@@ -72,6 +72,16 @@ describe('view extraction in the real app', function () {
 		expect(await browser.$('[data-bve="insert"]').isEnabled()).toBe(false); expect(await text()).toBe('Before\nREPLACE\nAfter');
 		expect(await browser.executeObsidian(({ app }) => app.vault.read(app.vault.getFileByPath('Example.base')!))).toBe(source);
 	});
+	it('copies one complete view to the real clipboard for free without insertion', async () => {
+		await prepare(); await selectB();
+		const preview = await browser.$('[data-bve="preview"]').getValue();
+		await browser.$('[data-bve="copy"]').click();
+		await browser.waitUntil(async () => (await browser.$('[data-bve="status"]').getText()).includes('Copied to clipboard'), { timeout: 10000 });
+		expect(await browser.executeObsidian(() => navigator.clipboard.readText())).toBe(preview);
+		expect(await text()).toBe('Before\nREPLACE\nAfter');
+		expect(await browser.$('[data-bve="preview"]').getValue()).toBe(preview);
+		expect(await browser.executeObsidian(({ app }) => app.vault.read(app.vault.getFileByPath('Example.base')!))).toBe(SOURCE);
+	});
 	it('keeps trailing blank lines in a provider value after insertion', async () => {
 		await prepare('views:\n  - name: B\n    type: table\n    providerText: |+\n      Keep these lines\n\n\n');
 		await ready();

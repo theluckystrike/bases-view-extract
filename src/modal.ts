@@ -14,6 +14,9 @@ export class ExtractModal extends Modal {
 	private opened = false;
 	private offPro: (() => void) | null = null;
 	private text = '';
+	private block = '';
+	private previewVersion = 0;
+	private copying = false;
 	private initialText: string;
 	private anchor: EditorPosition;
 	private head: EditorPosition;
@@ -22,6 +25,7 @@ export class ExtractModal extends Modal {
 	private preview!: HTMLTextAreaElement;
 	private status!: HTMLElement;
 	private insertButton!: HTMLButtonElement;
+	private copyButton!: HTMLButtonElement;
 	private presetSelect!: HTMLSelectElement;
 	private baseSelect!: HTMLSelectElement;
 
@@ -65,6 +69,8 @@ export class ExtractModal extends Modal {
 		this.insertButton = this.button(actions, 'Insert at selection', () => this.insert());
 		this.insertButton.dataset.bve = 'insert';
 		this.insertButton.addClass('mod-cta');
+		this.copyButton = this.button(actions, 'Copy to clipboard', () => { void this.copy(); });
+		this.copyButton.dataset.bve = 'copy';
 		this.button(actions, 'Cancel', () => this.close());
 		const presets = el.createDiv({ cls: 'bve-presets' });
 		const nameLabel = presets.createEl('label', { text: 'Preset name', cls: 'bve-field' });
@@ -86,9 +92,12 @@ export class ExtractModal extends Modal {
 		return button;
 	}
 	private showError(error: unknown): void {
+		++this.previewVersion;
 		this.text = '';
+		this.block = '';
 		this.preview.value = '';
 		this.insertButton.disabled = true;
+		this.copyButton.disabled = true;
 		this.status.setText(error instanceof Error ? error.message : String(error));
 		this.status.addClass('bve-error');
 	}
@@ -141,15 +150,39 @@ export class ExtractModal extends Modal {
 		}
 	}
 	private updatePreview(): void {
+		++this.previewVersion;
 		try {
 			if ((this.chosen.length > 1 || this.fromPreset) && !isPro()) throw new Error('This extraction needs Pro. Select a Base and one view for free extraction.');
 			const result = buildExtract(this.source, this.chosen);
+			this.block = result.text;
 			this.text = `${this.target.editor.getCursor('from').ch > 0 ? '\n' : ''}${result.text}`;
 			this.preview.value = this.text;
 			this.insertButton.disabled = false;
+			this.copyButton.disabled = this.copying;
 			this.status.removeClass('bve-error');
 			this.status.setText(result.warning ? 'Context warning: this or a link can resolve differently in the target note. Check the query before insertion.' : 'Ready. Check the query before insertion.');
 		} catch (error) { this.showError(error); }
+	}
+	async copy(): Promise<void> {
+		if (!this.opened || this.copying) return;
+		this.updatePreview();
+		if (!this.text) return;
+		const version = this.previewVersion;
+		const message = this.status.textContent ?? '';
+		this.copying = true;
+		this.copyButton.disabled = true;
+		try {
+			await navigator.clipboard.writeText(this.block);
+			if (this.opened && version === this.previewVersion) this.status.setText(`${message} Copied to clipboard.`);
+		} catch {
+			if (this.opened && version === this.previewVersion) {
+				this.status.setText(`${message} Clipboard write failed. Select the preview and copy it manually, or try again.`);
+				this.status.addClass('bve-error');
+			}
+		} finally {
+			this.copying = false;
+			if (this.opened) this.copyButton.disabled = !this.text;
+		}
 	}
 	insert(): void {
 		this.updatePreview();

@@ -757,6 +757,47 @@
     "B\n## hidden"
    ],
    "expected": "B \\#\\# hidden"
+  },
+  {
+   "name": "Copy one view as a complete fenced query with shared formulas",
+   "function": "buildExtract",
+   "args": [
+    "formulas:\n  cost: hours * rate\nviews:\n  - name: A\n    type: table\n  - name: B\n    type: table\n",
+    [
+     "B"
+    ]
+   ],
+   "expected": {
+    "text": "```base\nformulas:\n  cost: hours * rate\nviews:\n  - name: B\n    type: table\n```\n",
+    "warning": false
+   }
+  },
+  {
+   "name": "Copy keeps the note context warning",
+   "function": "buildExtract",
+   "args": [
+    "filters: this.file.name\nviews:\n  - name: B\n",
+    [
+     "B"
+    ]
+   ],
+   "expected": {
+    "text": "```base\nfilters: this.file.name\nviews:\n  - name: B\n```\n",
+    "warning": true
+   }
+  },
+  {
+   "name": "Copy rejects an ambiguous selected view",
+   "function": "buildExtract",
+   "args": [
+    "views:\n  - name: B\n  - name: B\n",
+    [
+     "B"
+    ]
+   ],
+   "expected": {
+    "error": "The view name is ambiguous: B"
+   }
   }
  ]
 }

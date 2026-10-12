@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { App } from 'obsidian-test-mocks/obsidian';
-import type { EditorPosition, MarkdownView } from 'obsidian';
+import { parseYaml, type EditorPosition, type MarkdownView } from 'obsidian';
 import BasesViewExtractPlugin from '../src/main';
 import { ExtractModal } from '../src/modal';
 import { bindPro, resetPro } from '../src/pro';
@@ -8,7 +8,7 @@ import manifest from '../manifest.json';
 
 const SOURCE = 'filters:\n  and: [x]\nviews:\n  - name: A\n    type: table\n  - name: B\n    type: table\n';
 const modals: ExtractModal[] = [];
-afterEach(() => { for (const m of modals.splice(0)) m.close(); resetPro(); vi.restoreAllMocks(); });
+afterEach(() => { for (const m of modals.splice(0)) m.close(); resetPro(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 function setup(source = SOURCE, initial = 'Before\nREPLACE\nAfter') {
 	const app = App.createConfigured__({ files: { 'a.md': initial, 'Example.base': source, 'Other.base': 'views:\n  - name: Other\n' } });
 	let value = initial;
@@ -87,5 +87,88 @@ describe('preview and editor safety', () => {
 		const b = s.m.contentEl.querySelector<HTMLInputElement>('[data-bve-view="B"]')!; b.checked = true; b.dispatchEvent(new Event('change'));
 		expect(s.preview()).toContain('## B'); pro = false; changed(); s.m.insert();
 		expect(s.preview()).toBe(''); expect(s.editor.replaceSelection).not.toHaveBeenCalled();
+	});
+});
+
+describe('copy the complete query', () => {
+	function clipboard(writeText = vi.fn<(text: string) => Promise<void>>().mockResolvedValue()) {
+		vi.stubGlobal('navigator', { clipboard: { writeText } });
+		return writeText;
+	}
+	function copyButton(m: ExtractModal) { return m.contentEl.querySelector<HTMLButtonElement>('[data-bve="copy"]')!; }
+	it('copies the selected view and shared fields for free without changing files or closing', async () => {
+		const write = clipboard();
+		const s = setup('formulas:\n  cost: hours * rate\nfilters:\n  and: [x]\nviews:\n  - name: A\n  - name: B\n    groupOrder: [B, null, A]\n');
+		const modify = vi.spyOn(s.app.vault, 'modify');
+		await s.m.loadFile('Example.base'); s.select('B');
+		const preview = s.preview(); await s.m.copy();
+		expect(write).toHaveBeenCalledExactlyOnceWith(preview);
+		expect(parseYaml(preview.slice('```base\n'.length, -'```\n'.length))).toEqual({ formulas: { cost: 'hours * rate' }, filters: { and: ['x'] }, views: [{ name: 'B', groupOrder: ['B', null, 'A'] }] });
+		expect(s.value()).toBe('Before\nREPLACE\nAfter'); expect(modify).not.toHaveBeenCalled(); expect(s.editor.replaceSelection).not.toHaveBeenCalled();
+		expect(s.p.modals.has(s.m)).toBe(true); expect(s.status()).toContain('Copied to clipboard');
+	});
+	it('disables copy until a valid view is selected and rejects invalid or ambiguous YAML', async () => {
+		const write = clipboard(); const s = setup();
+		expect(copyButton(s.m).disabled).toBe(true); await s.m.copy();
+		for (const source of ['views: [', 'views:\n  - name: B\n  - name: B\n']) {
+			const invalid = setup(source); await invalid.m.loadFile('Example.base');
+			expect(copyButton(invalid.m).disabled).toBe(true); await invalid.m.copy();
+		}
+		expect(write).not.toHaveBeenCalled();
+	});
+	it('keeps the preview and insertion available after a failed write, then retries', async () => {
+		const write = clipboard(vi.fn<(text: string) => Promise<void>>().mockRejectedValueOnce(new Error('Permission denied')).mockResolvedValue());
+		const s = setup(); await s.m.loadFile('Example.base'); const preview = s.preview(); await s.m.copy();
+		expect(s.preview()).toBe(preview); expect(s.status()).toContain('copy it manually'); expect(copyButton(s.m).disabled).toBe(false);
+		expect(s.m.contentEl.querySelector<HTMLButtonElement>('[data-bve="insert"]')!.disabled).toBe(false);
+		await s.m.copy(); expect(write).toHaveBeenCalledTimes(2); expect(s.status()).toContain('Copied to clipboard');
+		expect(s.m.contentEl.querySelector('[data-bve="status"]')!.classList.contains('bve-error')).toBe(false);
+	});
+	it('offers manual copy if the clipboard API is not available', async () => {
+		vi.stubGlobal('navigator', {}); const s = setup(); await s.m.loadFile('Example.base'); const preview = s.preview();
+		await s.m.copy(); expect(s.status()).toContain('Clipboard write failed'); expect(s.preview()).toBe(preview);
+	});
+	it('keeps the context warning visible after copy succeeds or fails', async () => {
+		const write = clipboard(); const s = setup('filters: this.file.name\nviews:\n  - name: B\n'); await s.m.loadFile('Example.base');
+		await s.m.copy(); expect(s.status()).toContain('Context warning'); expect(s.status()).toContain('Copied');
+		write.mockRejectedValueOnce(new Error('Blocked')); await s.m.copy();
+		expect(s.status()).toContain('Context warning'); expect(s.status()).toContain('failed');
+	});
+	it('blocks a second copy while a write is pending', async () => {
+		let resolve!: () => void; const write = clipboard(vi.fn(() => new Promise<void>((r) => { resolve = r; })));
+		const s = setup(); await s.m.loadFile('Example.base'); const pending = s.m.copy();
+		expect(copyButton(s.m).disabled).toBe(true); await s.m.copy(); expect(write).toHaveBeenCalledOnce();
+		resolve(); await pending; expect(copyButton(s.m).disabled).toBe(false);
+	});
+	it.each([false, true])('does not overwrite a newer preview when the old copy fails=%s', async (fail) => {
+		let resolve!: () => void; let reject!: () => void;
+		clipboard(vi.fn(() => new Promise<void>((ok, bad) => { resolve = ok; reject = () => bad(new Error('Blocked')); })));
+		const s = setup(); await s.m.loadFile('Example.base'); const pending = s.m.copy();
+		s.select('B'); const message = s.status();
+		if (fail) reject(); else resolve(); await pending;
+		expect(s.preview()).toContain('name: B'); expect(s.status()).toBe(message); expect(copyButton(s.m).disabled).toBe(false);
+	});
+	it('does not update a closed modal after a pending copy completes', async () => {
+		let resolve!: () => void; clipboard(vi.fn(() => new Promise<void>((r) => { resolve = r; })));
+		const s = setup(); await s.m.loadFile('Example.base'); const pending = s.m.copy(); s.m.close(); resolve(); await pending;
+		expect(s.m.contentEl.textContent).toBe(''); expect(s.p.modals.size).toBe(0);
+	});
+	it('copies Pro sections but blocks a new copy after Pro turns off', async () => {
+		const write = clipboard(); let pro = true; let changed: () => void = () => {};
+		bindPro({ isPro: () => pro, onChange: (cb: () => void) => { changed = cb; return () => {}; } } as never);
+		const s = setup(); await s.m.loadFile('Example.base');
+		const toggle = s.m.contentEl.querySelector<HTMLInputElement>('[data-bve="batch"]')!; toggle.checked = true; toggle.dispatchEvent(new Event('change'));
+		const b = s.m.contentEl.querySelector<HTMLInputElement>('[data-bve-view="B"]')!; b.checked = true; b.dispatchEvent(new Event('change'));
+		await s.m.copy(); expect(write).toHaveBeenCalledExactlyOnceWith(s.preview()); expect(s.preview()).toContain('## B');
+		pro = false; changed(); await s.m.copy(); expect(write).toHaveBeenCalledOnce(); expect(copyButton(s.m).disabled).toBe(true);
+	});
+});
+
+describe('copy text does not depend on the cursor', () => {
+	it('copies the block without the insertion newline when the cursor is in the middle of a line', async () => {
+		const write = vi.fn<(text: string) => Promise<void>>().mockResolvedValue(); vi.stubGlobal('navigator', { clipboard: { writeText: write } });
+		const s = setup(); s.setSelection({ line: 1, ch: 3 }, { line: 1, ch: 3 }); await s.m.loadFile('Example.base');
+		expect(s.preview().startsWith('\n```base\n')).toBe(true); await s.m.copy();
+		expect(write).toHaveBeenCalledExactlyOnceWith(s.preview().slice(1));
 	});
 });
