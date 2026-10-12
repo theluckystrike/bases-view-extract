@@ -1,5 +1,11 @@
 # bases-view-extract
 
+## 1.1.1
+
+### Patch Changes
+
+- 3545510: Preset save and delete now read data.json first, so a preset that sync added on another device is kept, and Delete preset with no selection shows an error.
+
 ## 1.1.0
 
 ### Minor Changes

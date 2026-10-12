@@ -164,6 +164,15 @@ describe('copy the complete query', () => {
 	});
 });
 
+describe('preset controls', () => {
+	it('does not report a delete when no preset is selected', async () => {
+		const s = setup(); const save = vi.spyOn(s.p, 'saveData');
+		s.m.contentEl.querySelector<HTMLButtonElement>('[data-bve="delete"]')!.click();
+		await vi.waitFor(() => expect(s.status()).toBe('Select a saved preset.'));
+		expect(save).not.toHaveBeenCalled();
+	});
+});
+
 describe('copy text does not depend on the cursor', () => {
 	it('copies the block without the insertion newline when the cursor is in the middle of a line', async () => {
 		const write = vi.fn<(text: string) => Promise<void>>().mockResolvedValue(); vi.stubGlobal('navigator', { clipboard: { writeText: write } });

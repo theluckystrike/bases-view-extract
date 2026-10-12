@@ -42,6 +42,10 @@ export default class BasesViewExtractPlugin extends Plugin {
 	async loadSettings(): Promise<void> {
 		this.settings = normalizeSettings(await this.loadData() as unknown);
 	}
+	/** Sync can write data.json while the plugin runs. Reload it in the write queue. */
+	async onExternalSettingsChange(): Promise<void> {
+		await this.queuePresetWrite(() => this.loadSettings());
+	}
 	private queuePresetWrite(write: () => Promise<void>): Promise<void> {
 		const pending = this.presetWrites.then(write);
 		this.presetWrites = pending.catch(() => {});
@@ -56,6 +60,7 @@ export default class BasesViewExtractPlugin extends Plugin {
 			if (!isPro()) throw new Error('Named query presets need Pro. Sign in in the plugin settings.');
 			if (!next.name) throw new Error('Enter a preset name.');
 			buildExtract(next.source, next.views);
+			await this.loadSettings();
 			if (this.settings.presets.some((p) => p.name === next.name)) throw new Error('That preset name exists. Delete it or use a new name.');
 			const presets = [...this.settings.presets, next];
 			await this.saveData({ presets });
@@ -64,6 +69,7 @@ export default class BasesViewExtractPlugin extends Plugin {
 	}
 	async deletePreset(name: string): Promise<void> {
 		await this.queuePresetWrite(async () => {
+			await this.loadSettings();
 			const presets = this.settings.presets.filter((p) => p.name !== name);
 			await this.saveData({ presets });
 			this.settings.presets = presets;

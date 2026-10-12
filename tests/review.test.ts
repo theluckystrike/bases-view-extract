@@ -45,6 +45,29 @@ describe('review regressions', () => {
 		await p.loadSettings();
 		expect(p.settings.presets.map((item) => item.name)).toEqual(['Saved']);
 	});
+	it('keeps a preset that sync wrote to data.json after load', async () => {
+		const p = plugin();
+		await p.loadSettings();
+		await p.saveData({ presets: [preset('Synced')] });
+		await p.savePreset(preset('Local'));
+		await p.loadSettings();
+		expect(p.settings.presets.map((item) => item.name)).toEqual(['Synced', 'Local']);
+	});
+	it('keeps a synced preset when a delete runs on stale memory', async () => {
+		const p = plugin();
+		await p.savePreset(preset('Old'));
+		await p.saveData({ presets: [preset('Old'), preset('Synced')] });
+		await p.deletePreset('Old');
+		await p.loadSettings();
+		expect(p.settings.presets.map((item) => item.name)).toEqual(['Synced']);
+	});
+	it('reloads presets when data.json changes on disk', async () => {
+		const p = plugin();
+		await p.loadSettings();
+		await p.saveData({ presets: [preset('Synced')] });
+		await p.onExternalSettingsChange();
+		expect(p.settings.presets.map((item) => item.name)).toEqual(['Synced']);
+	});
 	it('keeps trailing blank lines in a parsed YAML value', () => {
 		const config = { views: [{ name: 'A', type: 'table', providerText: 'Keep these lines\n\n\n' }] };
 		const result = buildExtract(stringifyYaml(config), ['A']);

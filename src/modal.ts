@@ -232,6 +232,7 @@ export class ExtractModal extends Modal {
 	}
 	private async deletePreset(): Promise<void> {
 		try {
+			if (!this.presetSelect.value) throw new Error('Select a saved preset.');
 			await this.extractPlugin.deletePreset(this.presetSelect.value);
 			if (this.opened) { this.renderPresets(); this.status.setText('Preset deleted.'); }
 		} catch (error) { this.showError(error); }
