@@ -81,9 +81,7 @@ The core features are free. Pro features need a GitHub Sponsors sponsorship of t
 
 GitHub handles the payment. Sponsor at https://github.com/sponsors/theluckystrike. You need no account for the free features. Pro needs the GitHub account that sponsors.
 
-The seven-day interval below applies after a successful sponsorship check. If a check fails, the plugin can try again after six hours. The 14-day offline period starts at the last successful check. A sign out or a reply that rejects the sponsorship turns Pro off at once.
-
-Until you select "Sign in with GitHub" in the settings, Bases View Extract makes no network requests of its own. Sign in uses the GitHub device flow. Bases View Extract sends its public client ID and the scope `read:user` to `https://github.com/login/device/code` and shows you a code. While you enter the code at https://github.com/login/device, it asks `https://github.com/login/oauth/access_token` every few seconds to check the sign-in status. The scope permits profile reads only. GitHub needs this access to show the sponsorship tier. It grants no repository scope and no write access.
+Until you select "Sign in with GitHub" in the settings, Bases View Extract makes no network requests. Sign in uses the GitHub device flow. Bases View Extract sends its public client ID and the scope `read:user` to `https://github.com/login/device/code` and shows you a code. While you enter the code at https://github.com/login/device, it asks `https://github.com/login/oauth/access_token` every few seconds to check the sign-in status. The scope permits profile reads only. GitHub needs this access to show the sponsorship tier. It grants no repository scope and no write access.
 
 After sign in, Bases View Extract sends one query to `https://api.github.com/graphql`. It checks if the signed-in account sponsors theluckystrike. It asks for the tier and the total payment to theluckystrike. The plugin reuses a successful check for 7 days. Failed checks can retry after 6 hours. Select Refresh to request an earlier check. It sends no note content, file names or other vault data, and it has no telemetry.
 

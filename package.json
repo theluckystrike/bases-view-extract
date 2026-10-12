@@ -1,6 +1,6 @@
 {
 	"name": "bases-view-extract",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"private": true,
 	"description": "Copy one saved Bases view as a complete embedded query.",
 	"main": "main.js",
