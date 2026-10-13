@@ -13,7 +13,7 @@ export default class BasesViewExtractPlugin extends Plugin {
 	private presetWrites: Promise<void> = Promise.resolve();
 	async onload(): Promise<void> {
 		await this.loadSettings();
-		const pro = createGitHubSponsors(this.app, this.manifest.id, SPONSORS);
+		const pro = createGitHubSponsors(this.app, this.manifest.id, SPONSORS, this);
 		pro.init();
 		this.pro = pro;
 		bindPro(pro);
