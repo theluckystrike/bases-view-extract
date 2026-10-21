@@ -54,7 +54,7 @@ Enter a preset name and select “Save preset” to keep a snapshot of the sourc
 
 ## Install
 
-This source tree is prepared for release. To install a built copy by hand, put `main.js`, `manifest.json` and `styles.css` in `<vault>/.obsidian/plugins/bases-view-extract/`. Enable it in Community plugins. It needs Obsidian 1.13.4 or later. Enable the core Bases plugin to render the inserted query.
+Search for Bases View Extract in Community plugins → Browse, install it and enable it. To install by hand, put `main.js`, `manifest.json` and `styles.css` in `<vault>/.obsidian/plugins/bases-view-extract/`. Enable it in Community plugins. It needs Obsidian 1.13.4 or later. Enable the core Bases plugin to render the inserted query.
 
 ## Usage
 
@@ -68,6 +68,8 @@ To paste the query elsewhere, select “Copy to clipboard” at step 4. Paste th
 Cancel closes the window without insertion. A parse error clears the preview and disables the insert button. If the target note, its text or its selection changes while the window is open, insertion stops. Close the window and run the command again. Multiple editor selections are not supported.
 
 ## Settings
+
+After a minor or major update, this plugin opens one What's new tab in the background. The tab and settings card suggest other NoteMods plugins and Zovo Chat and link to notemods.com for feedback ([privacy](https://notemods.com/privacy/)). The tab sends no data. Turn the tab off in Settings.
 
 The plugin settings contain the GitHub Sponsors controls for Pro: sponsor, sign in, refresh and sign out. The extraction window contains the file selector, view selector, preview and preset controls. There are no background extraction rules to set. Presets are stored in this plugin’s `data.json` in the vault. Vault sync can copy that file to your other devices.
 

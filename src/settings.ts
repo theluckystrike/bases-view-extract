@@ -3,6 +3,7 @@ import { sponsorsSettingItems } from './license/github-obsidian';
 import { isObject } from './extract';
 import { PRO_UI } from './pro';
 import type BasesViewExtractPlugin from './main';
+import { helloSettingItems } from './hello/settings';
 
 export interface Preset { name: string; sourcePath: string; source: string; views: string[] }
 export interface ExtractSettings { presets: Preset[] }
@@ -24,6 +25,11 @@ export class ExtractSettingTab extends PluginSettingTab {
 		super(app, extractPlugin);
 	}
 	getSettingDefinitions(): SettingDefinitionItem[] {
+		// The product rows, then the "More from NoteMods" card (packages/hello).
+		return [...this.productSettingDefinitions(), ...helloSettingItems()];
+	}
+
+	productSettingDefinitions(): SettingDefinitionItem[] {
 		return [
 			...(this.extractPlugin.pro ? sponsorsSettingItems(this.extractPlugin.pro, PRO_UI) : []),
 			{ name: 'Query presets', desc: 'Save and load presets in the extraction window. A preset is a local snapshot. Delete it there to remove the saved copy.' },

@@ -1,0 +1,34 @@
+{
+	"id": "bases-view-extract",
+	"name": "Bases View Extract",
+	"version": "1.2.0",
+	"changes": [
+		"New Send feedback command. It opens a page where you can report a problem or suggest an idea.",
+		"Preset save and delete now read data.json first, so a preset that sync added on another device is kept.",
+		"Delete preset with no selection shows an error."
+	],
+	"changes_user": [
+		"New Send feedback command. It opens a page where you can report a problem or suggest an idea.",
+		"Saving or deleting a preset no longer removes a preset synced from another device.",
+		"Deleting a preset with nothing selected now shows an error."
+	],
+	"tip": "Select Copy to clipboard to copy the complete query block with its shared definitions.",
+	"thanks": "Hi, I am Michael, a solo developer in Poland. Bases View Extract is one of over 100 small plugins that I make. Thank you for using it with Bases. Bases is still new, and your setups teach me a lot.",
+	"related": [
+		{
+			"id": "bases-view-tabs",
+			"name": "Bases View Tabs",
+			"blurb": "Switch between the saved views of a base from a tab strip."
+		},
+		{
+			"id": "bases-view-checkpoints",
+			"name": "Bases View Checkpoints",
+			"blurb": "Save the setup of a view and restore it after quick changes."
+		},
+		{
+			"id": "bases-filter-switches",
+			"name": "Bases Filter Switches",
+			"blurb": "Turn saved Bases filters on or off with switches."
+		}
+	]
+}
