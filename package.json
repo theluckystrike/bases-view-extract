@@ -1,7 +1,6 @@
 {
 	"name": "bases-view-extract",
-	"repository": {"type": "git", "url": "theluckystrike/bases-view-extract.git"},
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"private": true,
 	"description": "Copy one saved Bases view as a complete embedded query.",
 	"main": "main.js",

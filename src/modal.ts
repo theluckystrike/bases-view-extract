@@ -1,6 +1,6 @@
 import { MarkdownView, Modal, parseYaml, type EditorPosition } from 'obsidian';
 import { buildExtract, viewNames } from './extract';
-import { isPro, onProChange } from './pro';
+import { isPro, onProChange, PRO_BATCH, PRO_PRESETS, proNotice } from './pro';
 import type BasesViewExtractPlugin from './main';
 
 export class ExtractModal extends Modal {
@@ -56,7 +56,8 @@ export class ExtractModal extends Modal {
 		const batchToggle = batchLabel.createEl('input', { type: 'checkbox', attr: { 'data-bve': 'batch' } });
 		batchLabel.appendText(' Several views in separate sections (Pro)');
 		batchToggle.addEventListener('change', () => {
-			if (batchToggle.checked && !isPro()) { batchToggle.checked = false; this.showError('Several views need Pro. Sign in in the plugin settings.'); return; }
+			// A free user gets the shared Pro notice. The toggle shows off again and the free preview stays.
+			if (batchToggle.checked && !isPro()) { batchToggle.checked = false; proNotice(PRO_BATCH); return; }
 			this.batch = batchToggle.checked;
 			this.chosen = this.chosen.slice(0, 1);
 			this.renderViews();
@@ -202,6 +203,8 @@ export class ExtractModal extends Modal {
 		for (const preset of this.extractPlugin.settings.presets) this.option(this.presetSelect, preset.name, preset.name);
 	}
 	private async savePreset(name: string): Promise<void> {
+		// A free user gets the shared Pro notice. Nothing is saved and the free preview stays.
+		if (!isPro()) { proNotice(PRO_PRESETS); return; }
 		try {
 			if (!this.text) throw new Error('Select a valid query first.');
 			await this.extractPlugin.savePreset({ name, sourcePath: this.sourcePath, source: this.source, views: [...this.chosen] });
@@ -212,8 +215,9 @@ export class ExtractModal extends Modal {
 		} catch (error) { this.showError(error); }
 	}
 	private loadPreset(): void {
+		// A free user gets the shared Pro notice. No preset loads and the free preview stays.
+		if (!isPro()) { proNotice(PRO_PRESETS); return; }
 		try {
-			if (!isPro()) throw new Error('Named query presets need Pro. Sign in in the plugin settings.');
 			const preset = this.extractPlugin.settings.presets.find((p) => p.name === this.presetSelect.value);
 			if (!preset) throw new Error('Select a saved preset.');
 			++this.request;

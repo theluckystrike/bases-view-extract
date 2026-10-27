@@ -1,5 +1,11 @@
 # bases-view-extract
 
+## 1.2.1
+
+### Patch Changes
+
+- aa3b440: Several views in separate sections, Save preset and Load preset now show how to get Pro, with a Sponsor on GitHub button. The free preview of one view stays.
+
 ## 1.2.0
 
 ### Minor Changes

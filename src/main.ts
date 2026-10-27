@@ -1,7 +1,7 @@
 import { MarkdownView, Notice, Plugin } from 'obsidian';
 import type { SponsorsManager } from './license/index';
 import { createGitHubSponsors } from './license/github-obsidian';
-import { SPONSORS, bindPro, isPro, resetPro } from './pro';
+import { PRO_PRESETS, SPONSORS, bindPro, isPro, proText, resetPro } from './pro';
 import { ExtractSettingTab, normalizeSettings, type ExtractSettings, type Preset } from './settings';
 import { ExtractModal } from './modal';
 import { buildExtract } from './extract';
@@ -61,7 +61,7 @@ export default class BasesViewExtractPlugin extends Plugin {
 	async savePreset(preset: Preset): Promise<void> {
 		const next = { ...preset, name: preset.name.trim(), views: [...preset.views] };
 		await this.queuePresetWrite(async () => {
-			if (!isPro()) throw new Error('Named query presets need Pro. Sign in in the plugin settings.');
+			if (!isPro()) throw new Error(proText(PRO_PRESETS));
 			if (!next.name) throw new Error('Enter a preset name.');
 			buildExtract(next.source, next.views);
 			await this.loadSettings();

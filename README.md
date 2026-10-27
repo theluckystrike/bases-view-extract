@@ -48,7 +48,7 @@ Turn on “Several views in separate sections” and select the views to extract
 
 ### Named query presets (Pro)
 
-Enter a preset name and select “Save preset” to keep a snapshot of the source query and chosen views. Select the saved name and “Load preset” to preview it again. Source edits do not update that snapshot. Duplicate preset names are rejected. “Delete preset” removes the local saved copy, including when Pro is off.
+Enter a preset name and select “Save preset” to keep a snapshot of the source query and chosen views. Select the saved name and “Load preset” to preview it again. Source edits do not update that snapshot. Duplicate preset names are rejected. “Delete preset” removes the local saved copy, including when Pro is off. Without Pro, “Several views in separate sections”, “Save preset” and “Load preset” show a Sponsor on GitHub notice.
 
 <img src="https://raw.githubusercontent.com/theluckystrike/bases-view-extract/HEAD/docs/presets.png" alt="A Weekly review snapshot is saved in the local preset list" width="720">
 

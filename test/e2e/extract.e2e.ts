@@ -105,12 +105,7 @@ describe('view extraction in the real app', function () {
 		await browser.$('[data-bve="insert"]').click();
 		expect(await browser.$('[data-bve="status"]').getText()).toContain('changed'); expect(await text()).toBe('New text');
 	});
-	it('keeps batch and presets behind the sponsorship check', async () => {
-		await prepare(); await selectB(); await browser.$('[data-bve="batch"]').click();
-		expect(await browser.$('[data-bve="status"]').getText()).toContain('need Pro'); expect(await text()).toBe('Before\nREPLACE\nAfter');
-		await browser.$('[data-bve="preset-name"]').setValue('Free denied'); await browser.$('[data-bve="save"]').click();
-		expect(await browser.$('[data-bve="status"]').getText()).toContain('query');
-	});
+	// The free-user test of batch and presets is in pro-notice.e2e.ts (shared Pro notice).
 	it('Pro inserts complete queries in separate sections', async () => {
 		await prepare(); await ready(); await setPro(); await browser.$('[data-bve="batch"]').click();
 		await browser.$('[data-bve-view="B"]').click(); await ready();
