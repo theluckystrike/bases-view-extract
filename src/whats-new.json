@@ -1,9 +1,9 @@
 {
 	"id": "bases-view-extract",
 	"name": "Bases View Extract",
-	"version": "1.2.1",
+	"version": "1.2.2",
 	"changes": [
-		"Several views in separate sections, Save preset and Load preset now show how to get Pro, with a Sponsor on GitHub button. The free preview of one view stays."
+		"The Pro notice of Bases View Extract now says that one payment turns on Pro in every NoteMods plugin."
 	],
 	"tip": "Select Copy to clipboard to copy the complete query block with its shared definitions.",
 	"thanks": "Hi, I am Michael, a solo developer in Poland. Bases View Extract is one of over 100 small plugins that I make. Thank you for using it with Bases. Bases is still new, and your setups teach me a lot.",

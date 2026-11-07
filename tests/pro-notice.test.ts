@@ -10,7 +10,7 @@ import manifest from '../manifest.json';
 // A free user can select "Several views in separate sections (Pro)", "Save preset" and "Load preset". Each select
 // shows the shared Pro notice with the "Sponsor on GitHub" button. The toggle shows off again, no preset is saved or
 // loaded, and the free preview of one view stays ready.
-const PITCH = 'Sponsor on GitHub, then sign in from the plugin settings.';
+const PITCH = 'One payment turns on Pro in every NoteMods plugin. Sponsor on GitHub, then sign in from the plugin settings.';
 const BATCH = 'Several views need Pro.';
 const PRESETS = 'Named query presets need Pro.';
 const SOURCE = 'filters:\n  and: [x]\nviews:\n  - name: A\n    type: table\n  - name: B\n    type: table\n';
